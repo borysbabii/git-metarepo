@@ -29,6 +29,10 @@ class InvalidRepository(GitError):
     """Path exists but was not a git repository"""
 
 
+class EmptyCommitMessage(GitError):
+    """Empty commit message"""
+
+
 RepoStatus = namedtuple("RepoStatus", ["active_branch", "untracked_files", "head", "is_detached", "is_dirty"])
 FetchResult = namedtuple("FetchResult", ["fetch_head", "ahead", "behind"])
 
@@ -133,3 +137,13 @@ class RepoTool:
 
         if track:
             self._repo.heads[name].set_tracking_branch(track)
+
+    def commit(self, msg):
+        """
+        Record changes to the repository.
+        :return:
+        """
+        if msg:
+            self._repo.index.commit(msg)
+        else:
+            raise EmptyCommitMessage()
